@@ -9,12 +9,15 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.sneakersapp.common.BottomNavItem
@@ -30,8 +33,12 @@ fun MainScreen() {
 
     Scaffold(
         bottomBar = {
-            BottomAppBar {
-                AppBottomNavigation(navController = navController)
+            if (currentRoute(navController) != Screen.SneakerDetailScreen.route + "/{id}" && currentRoute(
+                    navController = navController) != Screen.CartScreen.route
+                ) {
+                BottomAppBar {
+                    AppBottomNavigation(navController = navController)
+                }
             }
         }
     ) { innerPadding ->
@@ -50,15 +57,24 @@ fun MainScreen() {
                    SneakerListScreen(navController)
                 }
                 composable(BottomNavItem.Cart.screen_route) {
-                    CartScreen()
+                    CartScreen(navController)
+                }
+                composable(Screen.CartScreen.route) {
+                    CartScreen(navController)
                 }
                 composable(Screen.SneakerDetailScreen.route + "/{id}",
                     arguments = listOf(navArgument("id") { type = NavType.IntType })
                     ) {
                     val id = it.arguments?.getInt("id") ?: -1
-                    SneakerDetailScreen(id = id)
+                    SneakerDetailScreen(id = id,navController)
                 }
             }
         }
     }
+}
+
+@Composable
+public fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
 }

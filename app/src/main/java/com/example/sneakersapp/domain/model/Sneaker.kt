@@ -25,4 +25,12 @@ data class Sneaker(
     val slug: String,
     val status: String,
     val story_html: String
-)
+) {
+    fun doesMatchSearchQuery(query: String) : Boolean {
+        val matchingCombination = listOf(name, "${name.first()}")
+
+        return matchingCombination.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}

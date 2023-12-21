@@ -13,6 +13,7 @@ data class SneakerCart(
     val has_picture: Boolean,
     val name: String,
     val nickname: String,
+    val size: Double = 0.0,
     val original_picture_url: String,
     val release_date: String,
     val release_year: Int,

@@ -6,5 +6,7 @@ import com.example.sneakersapp.domain.model.Sneaker
 
 data class SneakerDetailsState(
     var sneakerDetails : MutableState<Sneaker?> = mutableStateOf(null),
-    var isLoading : MutableState<Boolean> = mutableStateOf(false)
+    var isLoading : MutableState<Boolean> = mutableStateOf(false),
+    var selectedSize : MutableState<Double> = mutableStateOf(0.0),
+    var onAddToCart : (Sneaker) -> Unit = {}
 )

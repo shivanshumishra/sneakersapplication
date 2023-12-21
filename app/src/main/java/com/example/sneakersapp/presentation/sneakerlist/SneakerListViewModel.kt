@@ -1,6 +1,7 @@
 package com.example.sneakersapp.presentation.sneakerlist
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,8 @@ import com.example.sneakersapp.domain.usecases.GetSneakersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,6 +41,9 @@ class SneakerListViewModel @Inject constructor(
     private val _showSortLoader = mutableStateOf(false)
     val showSortLoader : State<Boolean> = _showSortLoader
 
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
+
 
     init {
         getSneakers()
@@ -54,6 +60,10 @@ class SneakerListViewModel @Inject constructor(
         } else {
             getSneakers()
         }
+    }
+
+    fun onSearchTextChange(text : String) {
+        _searchText.value = text
     }
 
     private fun sortSneakers(sortType: SortType) : Flow<Resource<List<Sneaker>>> = flow {
@@ -88,14 +98,24 @@ class SneakerListViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     result.data?.let {
-                        _state.value = SneakerListState(sneakers = it)
+                        var filteredList : MutableList<Sneaker> = mutableListOf()
+                        if(_searchText.value.isNotBlank()) {
+                            result.data.forEach { sneaker ->
+                                if(sneaker.doesMatchSearchQuery(_searchText.value)){
+                                    filteredList.add(sneaker)
+                                }
+                            }
+                        } else {
+                            filteredList = it.toMutableList()
+                        }
+                        _state.value = SneakerListState(sneakers = filteredList)
                     }
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun getSneakers() {
+    fun getSneakers() {
         getSneakersUseCase().onEachElement()
     }
 
