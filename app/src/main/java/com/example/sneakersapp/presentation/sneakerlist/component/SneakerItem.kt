@@ -51,7 +51,7 @@ fun SneakerItem(
         )
     ) {
         val painter =
-            rememberImagePainter(data = "${sneaker.grid_picture_url}")
+            rememberImagePainter(data = sneaker.grid_picture_url)
         Column(modifier = Modifier
             .fillMaxSize()) {
             if(sneaker.has_stock){

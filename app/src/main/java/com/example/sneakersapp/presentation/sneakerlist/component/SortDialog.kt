@@ -17,9 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.sneakersapp.R
+import com.example.sneakersapp.common.TestTags.SORTBY_DIALOG_SECTION
 
 @Composable
 fun CommonDialog(
@@ -45,7 +47,7 @@ fun CommonDialog(
             TextButton(onClick = { onStateChange(false) }) {
                 Text(stringResource(id = R.string.button_ok), color = Color.Red)
             }
-        }, modifier = Modifier.padding(vertical = 5.dp)
+        }, modifier = Modifier.padding(vertical = 5.dp).testTag(SORTBY_DIALOG_SECTION)
     )
 }
 
